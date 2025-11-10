@@ -1,5 +1,5 @@
 import typer
-import src.funcs.funcs as funcs
+from src.funcs import funcs
 
 app = typer.Typer()
 
