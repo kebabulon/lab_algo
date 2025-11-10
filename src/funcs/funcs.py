@@ -13,7 +13,7 @@ def factorial_recursive(n: int) -> int:
 
 def fibo(n: int) -> int:
     if n <= 0:
-        raise ValueError("n должно быть больше 0")
+        raise ValueError("n must be greater than 0")
     if n <= 2:
         return 1
 
@@ -28,7 +28,7 @@ def fibo(n: int) -> int:
 
 def fibo_recursive(n: int) -> int:
     if n <= 0:
-        raise ValueError("n должно быть больше 0")
+        raise ValueError("n must be greater than 0")
     if n <= 2:
         return 1
 
