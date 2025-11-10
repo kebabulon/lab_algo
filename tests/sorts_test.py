@@ -1,30 +1,59 @@
 import pytest
 
 from src.sorts import sorts
-from src.benchmark.generators import rand_int_array
+from src.benchmark.generators import rand_int_array, many_duplicates
+
+from tests.constants import SORT_LOOPS, SORT_N, SORT_LO, SORT_HI
 
 
-def test_key_and_cmp():
-    #  key function
-    for i in range(100):
-        int_array = rand_int_array(100, -1000, 1000)
+def test_multisort():
+    # key function
+    for _ in range(SORT_LOOPS):
+        int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
         assert sorts.bubble_sort(int_array, key=lambda x: -x) == sorted(int_array, reverse=True)
 
-    #  cmp function
-    for i in range(100):
-        int_array = rand_int_array(100, -1000, 1000)
+    # cmp function
+    for _ in range(SORT_LOOPS):
+        int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
         assert sorts.bubble_sort(int_array, cmp=lambda x, y: y - x) == sorted(int_array, reverse=True)
 
-    #  both key and cmp
+    # array of non-number values
+    for _ in range(SORT_LOOPS):
+        list_array = [[1, x] for x in rand_int_array(SORT_N, SORT_LO, SORT_HI)]
+
+        def key(x):
+            return x[1]
+
+        assert sorts.bubble_sort(list_array, key=key) == sorted(list_array, key=key)
+
+    # multisort array by value
+    for _ in range(SORT_LOOPS):
+        many_duplicates_array = many_duplicates(SORT_N, SORT_LO, SORT_HI)
+        int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
+        list_array = [x for x in zip(many_duplicates_array, int_array)]
+        assert sorts.bubble_sort(list_array) == sorted(list_array)
+
+    # multisort array by key
+    for _ in range(SORT_LOOPS):
+        many_duplicates_array = many_duplicates(SORT_N, SORT_LO, SORT_HI)
+        int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
+        list_array = [x for x in zip(many_duplicates_array, int_array)]
+
+        def key(x):
+            return (-x[0], x[1])
+
+        assert sorts.bubble_sort(list_array, key=key) == sorted(list_array, key=key)
+
+    # both key and cmp
     with pytest.raises(ValueError):
         sorts.bubble_sort([3, 1, 2], key=lambda x: -x, cmp=lambda x, y: y - x)
 
 
 def test_bubble_sort():
-    #  empty array
+    # empty array
     assert sorts.bubble_sort([]) == []
 
-    #  100 rand_int_array
-    for i in range(100):
-        int_array = rand_int_array(100, -1000, 1000)
+    # rand_int_array
+    for _ in range(SORT_LOOPS):
+        int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
         assert sorts.bubble_sort(int_array) == sorted(int_array)
