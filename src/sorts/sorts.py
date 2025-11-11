@@ -65,11 +65,11 @@ def bubble_sort(a: list[T], key: KeyFunc):
             break
 
 
-def sort_by_center(a, low, high):
+def sort_by_center(a: list[T], low: int, high: int, key: KeyFunc):
     i = low
 
     for j in range(low, high):
-        if a[high] >= a[j]:
+        if key(a[high]) >= key(a[j]):
             a[i], a[j] = a[j], a[i]
             i += 1
 
@@ -78,14 +78,14 @@ def sort_by_center(a, low, high):
     return i
 
 
-def quick_sort_helper(a, low, high):
+def quick_sort_helper(a: list[T], low: int, high: int, key: KeyFunc):
     if high > low:
-        center = sort_by_center(a, low, high)
+        center = sort_by_center(a, low, high, key)
 
-        quick_sort_helper(a, center + 1, high)
-        quick_sort_helper(a, low, center - 1)
+        quick_sort_helper(a, center + 1, high, key)
+        quick_sort_helper(a, low, center - 1, key)
 
 
 @multisort
 def quick_sort(a: list[T], key: KeyFunc):
-    quick_sort_helper(a, 0, len(a) - 1)
+    quick_sort_helper(a, 0, len(a) - 1, key)
