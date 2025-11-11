@@ -44,6 +44,22 @@ def test_multisort():
 
         assert sorts.bubble_sort(list_array, key=key) == sorted(list_array, key=key)
 
+    # reverse
+    for _ in range(SORT_LOOPS):
+        int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
+        assert sorts.bubble_sort(int_array, reverse=True) == sorted(int_array, reverse=True)
+
+    # reverse with key
+    for _ in range(SORT_LOOPS):
+        many_duplicates_array = many_duplicates(SORT_N, SORT_LO, SORT_HI)
+        int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
+        list_array = [x for x in zip(many_duplicates_array, int_array)]
+
+        def key(x):
+            return x[0]
+
+        assert sorts.bubble_sort(list_array, key=key, reverse=True) == sorted(list_array, key=key, reverse=True)
+
     # both key and cmp
     with pytest.raises(ValueError):
         sorts.bubble_sort([3, 1, 2], key=lambda x: -x, cmp=lambda x, y: y - x)

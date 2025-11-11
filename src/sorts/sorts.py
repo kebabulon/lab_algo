@@ -13,13 +13,13 @@ CmpType = Optional[Callable[[T, T], int]]
 
 
 class SortCallable(Protocol[T]):
-    def __call__(self, a: list[T], *, key: KeyType = None, cmp: CmpType = None) -> list[T]:
+    def __call__(self, a: list[T], *, key: KeyType = None, cmp: CmpType = None, reverse: bool = False) -> list[T]:
         ...
 
 
 def multisort(sort_func: Callable[[list[T], KeyFunc], None]) -> SortCallable:
     @wraps(sort_func)
-    def multisorted(a: list[T], *, key: KeyType = None, cmp: CmpType = None) -> list[T]:
+    def multisorted(a: list[T], *, key: KeyType = None, cmp: CmpType = None, reverse: bool = False) -> list[T]:
         if not a:
             return []
 
@@ -41,12 +41,22 @@ def multisort(sort_func: Callable[[list[T], KeyFunc], None]) -> SortCallable:
             if isinstance(keys, Iterable) and isinstance(keys, Sized):
                 key_len = len(keys)
 
+        # reverse, so that unsorted elements have reverse order
+        if reverse:
+            result = list(reversed(result))
+
         if key_len:
             # sort in reverse order to keep correct element order (stable sorting)
             for key_index in range(key_len - 1, -1, -1):
                 sort_func(result, lambda x: key(x)[key_index])  # type: ignore
         else:
             sort_func(result, key)
+
+        # sort is stable, meaning unsorted elements are in reverse order
+        # reverse again, so that sorted elements have reverse order
+        # https://docs.python.org/3/howto/sorting.html#odds-and-ends
+        if reverse:
+            result = list(reversed(result))
 
         return result
 
