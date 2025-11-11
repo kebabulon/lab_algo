@@ -57,3 +57,13 @@ def test_bubble_sort():
     for _ in range(SORT_LOOPS):
         int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
         assert sorts.bubble_sort(int_array) == sorted(int_array)
+
+
+def test_quick_sort():
+    # empty array
+    assert sorts.quick_sort([]) == []
+
+    # rand_int_array
+    for _ in range(SORT_LOOPS):
+        int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
+        assert sorts.quick_sort(int_array) == sorted(int_array)

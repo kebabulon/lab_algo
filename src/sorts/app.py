@@ -10,3 +10,11 @@ app = typer.Typer()
 def bubble_sort(a: list[int]):
     result = sorts.bubble_sort(a)
     print(f"bubble_sort({a}) = {result}")
+
+
+@app.command(
+    context_settings={"ignore_unknown_options": True}
+)
+def quick_sort(a: list[int]):
+    result = sorts.quick_sort(a)
+    print(f"quick_sort({a}) = {result}")
