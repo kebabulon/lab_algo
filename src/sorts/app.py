@@ -1,4 +1,5 @@
 import typer
+
 from src.sorts import sorts
 
 app = typer.Typer()
