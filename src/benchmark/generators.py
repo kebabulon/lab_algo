@@ -1,7 +1,7 @@
 import random
 
 
-def rand_int_array(n: int, lo: int, hi: int, *, distinct=False, seed=None) -> list[int]:
+def rand_int_array(n: int, lo: int, hi: int, *, distinct: bool = False, seed: int | None = None) -> list[int]:
     random.seed(seed)
     if lo > hi:
         raise ValueError("lo must be lower than hi")
@@ -16,7 +16,7 @@ def rand_int_array(n: int, lo: int, hi: int, *, distinct=False, seed=None) -> li
     return m
 
 
-def many_duplicates(n: int, lo: int, hi: int, k_unique=5, *, seed=None) -> list[int]:
+def many_duplicates(n: int, lo: int, hi: int, k_unique: int = 5, *, seed: int | None = None) -> list[int]:
     random.seed(seed)
     if lo > hi:
         raise ValueError("lo must be lower than hi")
