@@ -7,6 +7,9 @@ from tests.constants import SORT_LOOPS, SORT_N, SORT_LO, SORT_HI
 
 
 def test_multisort():
+    # empty array
+    assert sorts.bubble_sort([]) == []
+
     # key function
     for _ in range(SORT_LOOPS):
         int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
@@ -66,20 +69,45 @@ def test_multisort():
 
 
 def test_bubble_sort():
-    # empty array
-    assert sorts.bubble_sort([]) == []
-
     # rand_int_array
     for _ in range(SORT_LOOPS):
         int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
         assert sorts.bubble_sort(int_array) == sorted(int_array)
 
+    # stable
+    for _ in range(SORT_LOOPS):
+        many_duplicates_array = many_duplicates(SORT_N, SORT_LO, SORT_HI)
+        int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
+        list_array = [x for x in zip(many_duplicates_array, int_array)]
+
+        def key(x):
+            return x[0]
+
+        assert sorts.bubble_sort(list_array, key=key) == sorted(list_array, key=key)
+
 
 def test_quick_sort():
-    # empty array
-    assert sorts.quick_sort([]) == []
-
     # rand_int_array
     for _ in range(SORT_LOOPS):
         int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
         assert sorts.quick_sort(int_array) == sorted(int_array)
+
+    # quick sort is not stable
+
+
+def test_counting_sort():
+    # rand_int_array
+    for _ in range(SORT_LOOPS):
+        int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
+        assert sorts.counting_sort(int_array) == sorted(int_array)
+
+    # stable
+    for _ in range(SORT_LOOPS):
+        many_duplicates_array = many_duplicates(SORT_N, SORT_LO, SORT_HI)
+        int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
+        list_array = [x for x in zip(many_duplicates_array, int_array)]
+
+        def key(x):
+            return x[0]
+
+        assert sorts.counting_sort(list_array, key=key) == sorted(list_array, key=key)

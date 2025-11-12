@@ -17,7 +17,7 @@ class SortCallable(Protocol[T]):
         ...
 
 
-def multisort(sort_func: Callable[[list[T], KeyFunc], None]) -> SortCallable:
+def multisort(sort_func: Callable[[list[T], KeyFunc], list[T]]) -> SortCallable:
     @wraps(sort_func)
     def multisorted(a: list[T], *, key: KeyType = None, cmp: CmpType = None, reverse: bool = False) -> list[T]:
         if not a:
@@ -26,7 +26,7 @@ def multisort(sort_func: Callable[[list[T], KeyFunc], None]) -> SortCallable:
         if key and cmp:
             raise ValueError("Both key and cmp arguments are defined")
 
-        result = copy(a)
+        result = a
 
         if cmp:
             key = cmp_to_key(cmp)
@@ -48,9 +48,9 @@ def multisort(sort_func: Callable[[list[T], KeyFunc], None]) -> SortCallable:
         if key_len:
             # sort in reverse order to keep correct element order (stable sorting)
             for key_index in range(key_len - 1, -1, -1):
-                sort_func(result, lambda x: key(x)[key_index])  # type: ignore
+                result = sort_func(result, lambda x: key(x)[key_index])  # type: ignore
         else:
-            sort_func(result, key)
+            result = sort_func(result, key)
 
         # sort is stable, meaning unsorted elements are in reverse order
         # reverse again, so that sorted elements have reverse order
@@ -65,6 +65,8 @@ def multisort(sort_func: Callable[[list[T], KeyFunc], None]) -> SortCallable:
 
 @multisort
 def bubble_sort(a: list[T], key: KeyFunc):
+    a = copy(a)
+
     while True:
         swapped = False
         for i in range(1, len(a)):
@@ -73,6 +75,8 @@ def bubble_sort(a: list[T], key: KeyFunc):
                 swapped = True
         if not swapped:
             break
+
+    return a
 
 
 def sort_by_center(a: list[T], low: int, high: int, key: KeyFunc):
@@ -98,4 +102,51 @@ def quick_sort_helper(a: list[T], low: int, high: int, key: KeyFunc):
 
 @multisort
 def quick_sort(a: list[T], key: KeyFunc):
+    a = copy(a)
+
     quick_sort_helper(a, 0, len(a) - 1, key)
+
+    return a
+
+
+@multisort
+def counting_sort(a: list[T], key: KeyFunc):
+    output = copy(a)
+
+    max_key: int = key(a[0])
+    if type(max_key) is not int:
+        raise ValueError("key function must return int")
+
+    min_key: int = max_key
+
+    #  iterate over
+    for v in a[1:]:
+        v_key = key(v)
+        if type(v_key) is not int:
+            raise ValueError("key function must return int")
+
+        if max_key < v_key:
+            max_key = v_key
+        if min_key > v_key:
+            min_key = v_key
+
+    max_key += 1
+    if min_key < 0:
+        max_key -= min_key
+    else:
+        min_key = 0
+
+    count = [0] * max_key
+
+    for v in a:
+        count[key(v) - min_key] += 1
+
+    for i in range(1, max_key):
+        count[i] += count[i - 1]
+
+    for v in reversed(a):
+        v_key = key(v) - min_key
+        count[v_key] -= 1
+        output[count[v_key]] = v
+
+    return output
