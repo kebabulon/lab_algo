@@ -1,9 +1,11 @@
+from sys import setrecursionlimit
 from functools import cmp_to_key, wraps
 from collections.abc import Callable, Iterable, Sized
 from typing import Any, TypeVar, Optional, Protocol
 
 from copy import copy
 
+setrecursionlimit(1000000)
 
 T = TypeVar('T')
 
@@ -20,7 +22,25 @@ class MultisortCallable(Protocol[T]):
         ...
 
 
-sorts_dict: dict[str, MultisortCallable] = {}
+def power_sort(a: list[T], *, key: KeyType = None, cmp: CmpType = None, reverse: bool = False) -> list[T]:
+    a = copy(a)
+
+    if key and cmp:
+        raise ValueError("Both key and cmp arguments are defined")
+
+    if key:
+        a.sort(key=key, reverse=reverse)
+    elif cmp:
+        a.sort(key=cmp_to_key(cmp), reverse=reverse)
+    else:
+        a.sort(reverse=reverse)
+
+    return a
+
+
+sorts_dict: dict[str, MultisortCallable] = {
+    ".sort() (powersort)": power_sort
+}
 
 
 def multisort(stable: bool) -> Callable[[SortCallable], MultisortCallable]:

@@ -1,6 +1,6 @@
 import typer
 
-from src.benchmark import generators
+from src.generators import generators
 
 app = typer.Typer()
 

@@ -1,7 +1,7 @@
 import pytest
 
 from src.sorts import sorts
-from src.benchmark.generators import rand_int_array, many_duplicates
+from src.generators.generators import rand_int_array, many_duplicates
 
 from tests.constants import SORT_LOOPS, SORT_N, SORT_LO, SORT_HI
 
