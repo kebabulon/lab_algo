@@ -1,6 +1,6 @@
 from sys import setrecursionlimit
 from functools import cmp_to_key, wraps
-from collections.abc import Callable, Iterable, Sized
+from collections.abc import Callable, Sequence
 from typing import Any, TypeVar, Optional, Protocol
 
 from copy import copy
@@ -65,7 +65,7 @@ def multisort(stable: bool) -> Callable[[SortCallable], MultisortCallable]:
 
                 key_len = 0
                 keys = key(a[0])
-                if isinstance(keys, Iterable) and isinstance(keys, Sized):
+                if isinstance(keys, Sequence):
                     key_len = len(keys)
 
             # reverse, so that unsorted elements have reverse order
