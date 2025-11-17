@@ -65,7 +65,7 @@ def multisort(stable: bool) -> Callable[[SortCallable], MultisortCallable]:
 
                 key_len = 0
                 keys = key(a[0])
-                if isinstance(keys, Sequence):
+                if isinstance(keys, Sequence) and not isinstance(keys, str):
                     key_len = len(keys)
 
             # reverse, so that unsorted elements have reverse order
