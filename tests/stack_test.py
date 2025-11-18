@@ -36,7 +36,7 @@ def test_peek(stack):
     stack.pop()
     assert stack.peek() == 1
     stack.pop()
-    # cannot peek from empty stack
+    # peek from empty stack
     with pytest.raises(IndexError):
         stack.peek()
 
@@ -71,7 +71,7 @@ def test_min(stack):
     stack.pop()
     assert stack.min() == 1
     stack.clear()
-    # cannot get min from empty stack
+    # min from empty stack
     with pytest.raises(IndexError):
         stack.min()
 
@@ -88,5 +88,6 @@ def test_clear(stack):
 def test_iter(stack):
     stack.push(1)
     stack.push(2)
+    stack.push(3)
     m = [*stack]
-    assert m == [1, 2]
+    assert m == [1, 2, 3]
