@@ -43,7 +43,7 @@ sorts_dict: dict[str, MultisortCallable] = {
 }
 
 
-def multisort(stable: bool) -> Callable[[SortCallable], MultisortCallable]:
+def multisort(stable: bool, comparing: bool) -> Callable[[SortCallable], MultisortCallable]:
     def multisort_decorator(sort_func: SortCallable) -> MultisortCallable:
         @wraps(sort_func)
         def multisorted(a: list[T], *, key: KeyType = None, cmp: CmpType = None, reverse: bool = False) -> list[T]:
@@ -52,6 +52,9 @@ def multisort(stable: bool) -> Callable[[SortCallable], MultisortCallable]:
 
             if key and cmp:
                 raise ValueError("Both key and cmp arguments are defined")
+
+            if not comparing and cmp:
+                raise ValueError("cmp for non-comparing sort")
 
             result = copy(a)
 
@@ -64,22 +67,24 @@ def multisort(stable: bool) -> Callable[[SortCallable], MultisortCallable]:
                         return x
 
                 key_len = 0
+                # get key function of first element to check the length of keys
                 keys = key(a[0])
                 if isinstance(keys, Sequence) and not isinstance(keys, str):
                     key_len = len(keys)
+                    if not comparing:
+                        for i in a[1:]:
+                            if len(key(i)) != key_len:
+                                raise ValueError("Key function must return same length Sequence for non-comparing sorts")
 
             # reverse, so that unsorted elements have reverse order
             # https://docs.python.org/3/howto/sorting.html#odds-and-ends
             if reverse and stable:
                 result = list(reversed(result))
 
-            if key_len:
-                if stable:
-                    # sort in reverse order to keep correct element order (stable sorting)
-                    for key_index in range(key_len - 1, -1, -1):
-                        result = sort_func(result, lambda x: key(x)[key_index])  # type: ignore
-                else:
-                    raise ValueError("Multiple keys are not supported for unstable sorts")
+            if key_len and not comparing:
+                # sort in reverse order to keep correct element order (stable sorting)
+                for key_index in range(key_len - 1, -1, -1):
+                    result = sort_func(result, lambda x: key(x)[key_index])  # type: ignore
             else:
                 result = sort_func(result, key)
 
@@ -96,7 +101,10 @@ def multisort(stable: bool) -> Callable[[SortCallable], MultisortCallable]:
     return multisort_decorator
 
 
-@multisort(stable=True)
+@multisort(
+    stable=True,
+    comparing=True
+)
 def bubble_sort(a: list[T], key: KeyFunc) -> list[T]:
     while True:
         swapped = False
@@ -131,14 +139,20 @@ def quick_sort_helper(a: list[T], low: int, high: int, key: KeyFunc):
         quick_sort_helper(a, low, center - 1, key)
 
 
-@multisort(stable=False)
+@multisort(
+    stable=False,
+    comparing=True
+)
 def quick_sort(a: list[T], key: KeyFunc) -> list[T]:
     quick_sort_helper(a, 0, len(a) - 1, key)
 
     return a
 
 
-@multisort(stable=True)
+@multisort(
+    stable=True,
+    comparing=False
+)
 def counting_sort(a: list[T], key: KeyFunc) -> list[T]:
     output = copy(a)
 
