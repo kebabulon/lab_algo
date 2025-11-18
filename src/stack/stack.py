@@ -36,13 +36,13 @@ class Stack():
             self.get_head().next = new_node
             self.head = new_node
 
-        if self.min_stack:
+        if isinstance(self.min_stack, Stack):
             if self.min_stack.is_empty() or x <= self.min_stack.peek():
                 self.min_stack.push(x)
 
     def pop(self) -> int:
         if self.is_empty():
-            raise IndexError("pop from empty list")
+            raise IndexError("pop from empty stack")
 
         value = self.get_head().value
 
@@ -50,16 +50,14 @@ class Stack():
         while current_node.next and current_node.next != self.get_head():
             current_node = current_node.next
 
-        last_node = not bool(current_node.next)
-
-        if current_node == last_node:
-            self.tail = None
-            self.head = None
-        else:
+        if current_node.next:
             self.head = current_node
             current_node.next = None
+        else:
+            self.tail = None
+            self.head = None
 
-        if self.min_stack:
+        if isinstance(self.min_stack, Stack):
             if value == self.min_stack.peek():
                 self.min_stack.pop()
 
@@ -67,7 +65,7 @@ class Stack():
 
     def peek(self) -> int:
         if self.is_empty():
-            raise IndexError("peek from empty list")
+            raise IndexError("peek from empty stack")
         return self.get_head().value
 
     def is_empty(self) -> bool:
@@ -88,10 +86,10 @@ class Stack():
         return count
 
     def min(self) -> int:
-        if not self.min_stack:
+        if not isinstance(self.min_stack, Stack):
             raise ValueError("min is not supported for has_min=False Stack")
         if self.is_empty():
-            raise IndexError("min from empty list")
+            raise IndexError("min from empty stack")
         return self.min_stack.peek()
 
     def clear(self) -> None:
@@ -99,7 +97,7 @@ class Stack():
             return
         self.head = None
         self.tail = None
-        if self.min_stack:
+        if isinstance(self.min_stack, Stack):
             self.min_stack.clear()
 
     def __iter__(self):
