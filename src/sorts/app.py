@@ -27,3 +27,11 @@ def quick_sort(a: list[int], reverse: bool = False):
 def counting_sort(a: list[int], reverse: bool = False):
     result = sorts.counting_sort(a, reverse=reverse)
     print(f"counting_sort({a}) = {result}")
+
+
+@app.command(
+    context_settings={"ignore_unknown_options": True}
+)
+def radix_sort(a: list[int], base: int = 10, reverse: bool = False):
+    result = sorts.radix_sort(a, base=base, reverse=reverse)
+    print(f"radix_sort({a}, base={base}) = {result}")

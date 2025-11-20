@@ -18,11 +18,11 @@ SortCallable = Callable[[list[T], KeyFunc], list[T]]
 
 
 class MultisortCallable(Protocol[T]):
-    def __call__(self, a: list[T], *, key: KeyType = None, cmp: CmpType = None, reverse: bool = False) -> list[T]:
+    def __call__(self, a: list[T], key: KeyType = None, cmp: CmpType = None, reverse: bool = False, *args, **kwargs) -> list[T]:
         ...
 
 
-def power_sort(a: list[T], *, key: KeyType = None, cmp: CmpType = None, reverse: bool = False) -> list[T]:
+def power_sort(a: list[T], key: KeyType = None, cmp: CmpType = None, reverse: bool = False) -> list[T]:
     a = copy(a)
 
     if key and cmp:
@@ -46,7 +46,7 @@ sorts_dict: dict[str, MultisortCallable] = {
 def multisort(stable: bool, comparing: bool) -> Callable[[SortCallable], MultisortCallable]:
     def multisort_decorator(sort_func: SortCallable) -> MultisortCallable:
         @wraps(sort_func)
-        def multisorted(a: list[T], *, key: KeyType = None, cmp: CmpType = None, reverse: bool = False) -> list[T]:
+        def multisorted(a: list[T], key: KeyType = None, cmp: CmpType = None, reverse: bool = False, *args, **kwargs) -> list[T]:
             if not a:
                 return []
 
@@ -84,7 +84,7 @@ def multisort(stable: bool, comparing: bool) -> Callable[[SortCallable], Multiso
             if key_len and not comparing:
                 # sort in reverse order to keep correct element order (stable sorting)
                 for key_index in range(key_len - 1, -1, -1):
-                    result = sort_func(result, lambda x: key(x)[key_index])  # type: ignore
+                    result = sort_func(result, lambda x: key(x)[key_index], *args, **kwargs)  # type: ignore
             else:
                 result = sort_func(result, key)
 
@@ -157,14 +157,11 @@ def counting_sort(a: list[T], key: KeyFunc) -> list[T]:
     output = copy(a)
 
     max_key: int = key(a[0])
-    if type(max_key) is not int:
-        raise ValueError("key function must return int")
-
     min_key: int = max_key
 
     for v in a[1:]:
         v_key = key(v)
-        if type(v_key) is not int:
+        if not isinstance(v_key, int):
             raise ValueError("key function must return int")
 
         if max_key < v_key:
@@ -192,3 +189,46 @@ def counting_sort(a: list[T], key: KeyFunc) -> list[T]:
         output[count[v_key]] = v
 
     return output
+
+
+def radix_sort_helper(a: list[T], key: KeyFunc, base: int = 10):
+    max_key: int = max([key(x) for x in a])
+    if not isinstance(max_key, int):
+        raise ValueError("key function must return int")
+
+    exp = 1
+    while max_key // exp > 0:
+        a = counting_sort(a, key=lambda x: (key(x) // exp) % base)
+        exp *= base
+
+    return a
+
+
+@multisort(
+    stable=True,
+    comparing=False
+)
+def radix_sort(a: list[T], key: KeyFunc, base: int = 10) -> list[T]:
+    positive_a: list[T] = []
+    negative_a: list[T] = []
+
+    for v in a:
+        if key(v) < 0:
+            negative_a.append(v)
+        else:
+            positive_a.append(v)
+
+    def abs_key(x):
+        return abs(key(x))
+
+    if positive_a:
+        positive_a = radix_sort_helper(positive_a, key=key, base=base)
+    if negative_a:
+        # reverse before sorting to keep unsorted elements order (stable)
+        negative_a.reverse()
+        negative_a = radix_sort_helper(negative_a, key=abs_key, base=base)
+        # reverse negatinve_a because its sorted by digits
+        # meaning the bigger the number, the lesser it is
+        negative_a.reverse()
+
+    return negative_a + positive_a
