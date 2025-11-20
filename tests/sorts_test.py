@@ -1,7 +1,11 @@
 import pytest
 
 from src.sorts import sorts
-from src.generators.generators import rand_int_array, many_duplicates
+from src.generators.generators import (
+    rand_int_array,
+    many_duplicates,
+    rand_float_array
+)
 
 from tests.constants import SORT_LOOPS, SORT_N, SORT_LO, SORT_HI
 
@@ -129,3 +133,26 @@ def test_radix_sort():
             return x[0]
 
         assert sorts.radix_sort(list_array, key=key) == sorted(list_array, key=key)
+
+
+def test_bucket_sort():
+    # rand_float_array
+    for _ in range(SORT_LOOPS):
+        int_array = rand_float_array(SORT_N)
+        assert sorts.bucket_sort(int_array) == sorted(int_array)
+
+    # rand_int_array
+    for _ in range(SORT_LOOPS):
+        int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
+        assert sorts.bucket_sort(int_array) == sorted(int_array)
+
+    # stable
+    for _ in range(SORT_LOOPS):
+        many_duplicates_array = many_duplicates(SORT_N, SORT_LO, SORT_HI)
+        int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
+        list_array = [x for x in zip(many_duplicates_array, int_array)]
+
+        def key(x):
+            return x[0]
+
+        assert sorts.bucket_sort(list_array, key=key) == sorted(list_array, key=key)

@@ -3,6 +3,7 @@ from functools import cmp_to_key, wraps
 from collections.abc import Callable, Sequence
 from typing import Any, TypeVar, Optional, Protocol
 
+from math import ceil
 from copy import copy
 
 setrecursionlimit(1000000)
@@ -232,3 +233,45 @@ def radix_sort(a: list[T], key: KeyFunc, base: int = 10) -> list[T]:
         negative_a.reverse()
 
     return negative_a + positive_a
+
+
+@multisort(
+    stable=True,
+    comparing=False
+)
+def bucket_sort(a: list[T], key: KeyFunc, buckets: int | None = None) -> list[T]:
+    if not buckets:
+        buckets = ceil(len(a) / 2)
+    if len(a) == 2:
+        buckets = 2
+    if buckets <= 0:
+        raise ValueError("buckets must be positive")
+
+    max_key: float = max([key(x) for x in a])
+    min_key: float = min([key(x) for x in a])
+
+    # keys are the same, no need to sort
+    if max_key == min_key:
+        return a
+
+    def normalised_key(x):
+        x = key(x)
+        if not isinstance(x, (float, int)):
+            raise ValueError("key function must return float")
+        x -= min_key
+        # 0.999999 so that key maps to [0, 1)
+        x *= (0.999999 / (max_key - min_key))
+        return x
+
+    bucket_list: list[list[T]] = [[] for _ in range(buckets)]
+
+    for v in a:
+        index = int(normalised_key(v) * buckets)
+        bucket_list[index].append(v)
+
+    for i in range(buckets):
+        if bucket_list[i]:
+            bucket_list[i] = bucket_sort(bucket_list[i], key=key)
+
+    # return flattened out list
+    return [x for bucket in bucket_list for x in bucket]
