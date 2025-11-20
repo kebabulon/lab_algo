@@ -1,5 +1,9 @@
 from sys import setrecursionlimit
-from functools import cmp_to_key, wraps
+from functools import (
+    cmp_to_key,
+    wraps,
+    partial
+)
 from collections.abc import Callable, Sequence
 from typing import Any, TypeVar, Optional, Protocol
 
@@ -39,7 +43,7 @@ def power_sort(a: list[T], key: KeyType = None, cmp: CmpType = None, reverse: bo
     return a
 
 
-sorts_dict: dict[str, MultisortCallable] = {
+SORTS_DICT: dict[str, MultisortCallable] = {
     ".sort() (powersort)": power_sort
 }
 
@@ -87,7 +91,7 @@ def multisort(stable: bool, comparing: bool) -> Callable[[SortCallable], Multiso
                 for key_index in range(key_len - 1, -1, -1):
                     result = sort_func(result, lambda x: key(x)[key_index], *args, **kwargs)  # type: ignore
             else:
-                result = sort_func(result, key)
+                result = sort_func(result, key, *args, **kwargs)
 
             # if sort is stable, unsorted elements are now in reverse order
             # reverse again, so that sorted elements have reverse order
@@ -96,7 +100,7 @@ def multisort(stable: bool, comparing: bool) -> Callable[[SortCallable], Multiso
 
             return result
 
-        sorts_dict[sort_func.__name__] = multisorted
+        SORTS_DICT[sort_func.__name__] = multisorted
 
         return multisorted
     return multisort_decorator
@@ -239,7 +243,10 @@ def radix_sort(a: list[T], key: KeyFunc, base: int = 10) -> list[T]:
     stable=True,
     comparing=False
 )
-def bucket_sort(a: list[T], key: KeyFunc, buckets: int | None = None) -> list[T]:
+def bucket_sort(a: list[T], key: KeyFunc, buckets: int | None = None, sort: MultisortCallable | None = None) -> list[T]:
+    if not sort:
+        sort = bucket_sort
+
     if not buckets:
         buckets = ceil(len(a) / 2)
     if len(a) == 2:
@@ -271,7 +278,10 @@ def bucket_sort(a: list[T], key: KeyFunc, buckets: int | None = None) -> list[T]
 
     for i in range(buckets):
         if bucket_list[i]:
-            bucket_list[i] = bucket_sort(bucket_list[i], key=key)
+            bucket_list[i] = sort(bucket_list[i], key=key)
 
     # return flattened out list
     return [x for bucket in bucket_list for x in bucket]
+
+
+SORTS_DICT["bucket_sort (quick_sort)"] = partial(bucket_sort, sort=quick_sort)

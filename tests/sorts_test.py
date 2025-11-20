@@ -138,8 +138,8 @@ def test_radix_sort():
 def test_bucket_sort():
     # rand_float_array
     for _ in range(SORT_LOOPS):
-        int_array = rand_float_array(SORT_N)
-        assert sorts.bucket_sort(int_array) == sorted(int_array)
+        float_array = rand_float_array(SORT_N)
+        assert sorts.bucket_sort(float_array) == sorted(float_array)
 
     # rand_int_array
     for _ in range(SORT_LOOPS):
@@ -156,3 +156,9 @@ def test_bucket_sort():
             return x[0]
 
         assert sorts.bucket_sort(list_array, key=key) == sorted(list_array, key=key)
+
+    # sort argument
+    for _ in range(SORT_LOOPS):
+        float_array = rand_float_array(SORT_N)
+        assert sorts.bucket_sort(float_array, sort=sorts.bubble_sort) == sorted(float_array)
+        assert sorts.bucket_sort(float_array, sort=sorts.quick_sort) == sorted(float_array)

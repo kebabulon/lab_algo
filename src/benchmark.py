@@ -5,7 +5,7 @@ from timeit import default_timer
 
 from src.sorts.sorts import (
     MultisortCallable,
-    sorts_dict
+    SORTS_DICT
 )
 
 from src.generators import generators
@@ -79,5 +79,5 @@ def run_benchmarks() -> None:
         "reverse_sorted 10000": generators.reverse_sorted(10000),
     }
 
-    result: BenchmarkResult = benchmark_sorts(arrays, sorts_dict, print_status=True)
+    result: BenchmarkResult = benchmark_sorts(arrays, SORTS_DICT, print_status=True)
     print_benchmark_result(result)
