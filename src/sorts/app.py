@@ -43,3 +43,11 @@ def radix_sort(a: list[int], base: int = 10, reverse: bool = False):
 def bucket_sort(a: list[float], buckets: int | None = None, reverse: bool = False):
     result = sorts.bucket_sort(a, buckets=buckets, reverse=reverse)
     print(f"bucket_sort({a}, buckets={buckets}) = {result}")
+
+
+@app.command(
+    context_settings={"ignore_unknown_options": True}
+)
+def heap_sort(a: list[int], reverse: bool = False):
+    result = sorts.heap_sort(a, reverse=reverse)
+    print(f"heap_sort({a}) = {result}")

@@ -285,3 +285,34 @@ def bucket_sort(a: list[T], key: KeyFunc, buckets: int | None = None, sort: Mult
 
 
 SORTS_DICT["bucket_sort (quick_sort)"] = partial(bucket_sort, sort=quick_sort)
+
+
+@multisort(
+    stable=False,
+    comparing=True
+)
+def heap_sort(a: list[T], key: KeyFunc) -> list[T]:
+    start = len(a) // 2
+    end = len(a)
+
+    while end > 1:
+        if start > 0:
+            start -= 1
+        else:
+            end -= 1
+            a[end], a[0] = a[0], a[end]
+
+        root = start
+        while 2 * root + 1 < end:
+            child = 2 * root + 1
+
+            if child + 1 < end and key(a[child]) < key(a[child + 1]):
+                child = child + 1
+
+            if key(a[root]) < key(a[child]):
+                a[root], a[child] = a[child], a[root]
+                root = child
+            else:
+                break
+
+    return a

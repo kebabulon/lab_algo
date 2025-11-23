@@ -96,7 +96,16 @@ def test_quick_sort():
         int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
         assert sorts.quick_sort(int_array) == sorted(int_array)
 
-    # quick sort is not stable
+    # not stable
+    for _ in range(SORT_LOOPS):
+        many_duplicates_array = many_duplicates(SORT_N, SORT_LO, SORT_HI)
+        int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
+        list_array = [x for x in zip(many_duplicates_array, int_array)]
+
+        def key(x):
+            return x[0]
+
+        assert sorts.quick_sort(list_array, key=key) != sorted(list_array, key=key)
 
 
 def test_counting_sort():
@@ -162,3 +171,21 @@ def test_bucket_sort():
         float_array = rand_float_array(SORT_N)
         assert sorts.bucket_sort(float_array, sort=sorts.bubble_sort) == sorted(float_array)
         assert sorts.bucket_sort(float_array, sort=sorts.quick_sort) == sorted(float_array)
+
+
+def test_heap_sort():
+    # rand_int_array
+    for _ in range(SORT_LOOPS):
+        int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
+        assert sorts.heap_sort(int_array) == sorted(int_array)
+
+    # not stable
+    for _ in range(SORT_LOOPS):
+        many_duplicates_array = many_duplicates(SORT_N, SORT_LO, SORT_HI)
+        int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
+        list_array = [x for x in zip(many_duplicates_array, int_array)]
+
+        def key(x):
+            return x[0]
+
+        assert sorts.heap_sort(list_array, key=key) != sorted(list_array, key=key)
