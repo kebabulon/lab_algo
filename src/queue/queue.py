@@ -2,10 +2,22 @@ from src.stack.stack import Stack
 
 
 class Queue():
+    """
+    Очередь, использующая стак
+    """
+
     def __init__(self, has_min: bool = True):
         self.stack: Stack = Stack(has_min=False)
 
     def enqueue(self, x: int) -> None:
+        """
+        Добавляет елемент в очередь
+        1. Содается временый второй стак
+        2. Копируем в него текущий стак
+        3. Добавляем элемент в текущий пустой стак
+        4. Переносим элементы из временного стака в текущий
+        :param x: Число, которое добавляется в очередь
+        """
         temp_stack = Stack(has_min=False)
 
         while self.stack:

@@ -18,7 +18,11 @@ app.add_typer(queue_app, name="queue")
 
 
 @app.callback(invoke_without_command=True)
-def main(ctx: typer.Context):
+def main(ctx: typer.Context) -> None:
+    """
+    Запуск программы без агрументов. Запускает бенчмарк
+    :return: Данная функция ничего не возвращает
+    """
     if not ctx.invoked_subcommand:
         run_benchmarks()
 

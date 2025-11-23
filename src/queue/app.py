@@ -11,6 +11,11 @@ app = Typer()
 
 
 class QueueContainer:
+    """
+    Контейнер очереди
+    Вспомогательный класс, который имеет методы для загрузки и сохранения очереди в файл
+    """
+
     def __init__(self):
         self.queue = Queue()
         self.array = array('q', [])

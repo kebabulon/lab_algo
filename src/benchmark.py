@@ -10,8 +10,18 @@ from src.sorts.sorts import (
 
 from src.generators import generators
 
+console = Console()
+
+BenchmarkResult = dict[str, dict[str, float]]
+
 
 def timeit_once(func: MultisortCallable, *args, **kwargs) -> float:
+    """
+    Засекает время работы функции сортировки на данных аргументах
+    :param func: Функция сортировки
+    :param *args **kwargs: Аргументы для функции сортировки
+    :return: Время работы сортировки на данных аргументах
+    """
     start = default_timer()
 
     func(*args, **kwargs)
@@ -20,10 +30,14 @@ def timeit_once(func: MultisortCallable, *args, **kwargs) -> float:
     return end - start
 
 
-BenchmarkResult = dict[str, dict[str, float]]
-
-
 def benchmark_sorts(arrays: dict[str, list], algos: dict[str, MultisortCallable], print_status: bool = False) -> BenchmarkResult:
+    """
+    Запускает сортировки
+    :param arrays: Словарь с массивами, которые будут сортироватся
+    :param algos: Словарь с функциями сортировок
+    :param print_status: Если правда, печатает текущию сортировку.
+    :return: Словарь с результатами сортировок
+    """
     result: BenchmarkResult = {}
 
     last_status_len = 0
@@ -46,10 +60,12 @@ def benchmark_sorts(arrays: dict[str, list], algos: dict[str, MultisortCallable]
     return result
 
 
-console = Console()
-
-
 def print_benchmark_result(result: BenchmarkResult) -> None:
+    """
+    Печатает таблицу результатов
+    :param result: Словарь с результатами сортировок
+    :return: Данная функция ничего не возвращает
+    """
     table = Table(title="Benchmark")
 
     table.add_column("Array", style="cyan")
@@ -67,6 +83,10 @@ def print_benchmark_result(result: BenchmarkResult) -> None:
 
 
 def run_benchmarks() -> None:
+    """
+    Запуск бенчмарка. Создает словарь массивов для сортировки, запускает бенчмарк и печатает таблицу результатов
+    :return: Данная функция ничего не возвращает
+    """
     arrays: dict[str, list] = {
         # "rand_int_array 1000": generators.rand_int_array(1000, -100, 100),
         "rand_int_array 10000": generators.rand_int_array(10000, -100, 100),

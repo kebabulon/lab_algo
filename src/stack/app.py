@@ -10,6 +10,11 @@ app = Typer()
 
 
 class StackContainer:
+    """
+    Контейнер стака
+    Вспомогательный класс, который имеет методы для загрузки и сохранения стака в файл
+    """
+
     def __init__(self):
         self.stack = Stack()
         self.array = array('q', [])

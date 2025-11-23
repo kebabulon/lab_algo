@@ -31,6 +31,14 @@ SORTS_DICT: dict[str, MultisortCallable] = {}
 
 
 def multisort(stable: bool, comparing: bool) -> Callable[[SortCallable], MultisortCallable]:
+    """
+    Фабрика декоратора, добавляющего аргументы key, cmp, reverse и дополнительные проверки для функции сортировки
+    Каждая функция сортировки добавляется в словарь SORTS_DICT
+    Имплементирует принцип multisort, позволяющий использовать несравнивующие алгоритмы сортировок с несколькими ключами
+    :param stable: Является ли алгоритм сортировки стабильным (несортированные значения оставляют свой изначальный порядок)
+    :param comparing: Использует ли алгоритм сортировки сравения (например counting_sort использует индексацию, по-этому он не работает с cmp)
+    :return: Декоратор, возращающий функцию сортировки с аргументами key, cmp и reverse
+    """
     def multisort_decorator(sort_func: SortCallable) -> MultisortCallable:
         @wraps(sort_func)
         def multisorted(a: list[T], key: KeyType = None, cmp: CmpType = None, reverse: bool = False, *args, **kwargs) -> list[T]:
