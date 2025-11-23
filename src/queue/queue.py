@@ -22,13 +22,11 @@ class Queue():
 
         while self.stack:
             temp_stack.push(self.stack.pop())
-            print(self.stack)
 
         self.stack.push(x)
 
         while temp_stack:
             self.stack.push(temp_stack.pop())
-            print(self.stack)
 
     def dequeue(self) -> int:
         if self.is_empty():
