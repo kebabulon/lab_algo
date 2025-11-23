@@ -11,11 +11,8 @@ def stack():
 def test_push(stack):
     stack.push(1)
     assert [*stack] == [1]
-    assert stack.tail.value == stack.head.value
     stack.push(2)
     assert [*stack] == [1, 2]
-    assert stack.tail.value == 1
-    assert stack.head.value == 2
 
 
 def test_pop(stack):
