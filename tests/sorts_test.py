@@ -71,6 +71,14 @@ def test_multisort():
     with pytest.raises(ValueError):
         sorts.bubble_sort([3, 1, 2], key=lambda x: -x, cmp=lambda x, y: y - x)
 
+    # cmp for non-comparing sort
+    with pytest.raises(ValueError):
+        sorts.counting_sort([3, 1, 2], cmp=lambda x: -x)
+
+    # key function must return same length Sequence for non-comparing sorts
+    with pytest.raises(ValueError):
+        sorts.counting_sort([(3, 1), (1, 2, 3), (5,)])
+
 
 def test_bubble_sort():
     # rand_int_array
@@ -143,6 +151,11 @@ def test_radix_sort():
 
         assert sorts.radix_sort(list_array, key=key) == sorted(list_array, key=key)
 
+    # base argument
+    for _ in range(SORT_LOOPS):
+        int_array = rand_int_array(SORT_N, SORT_LO, SORT_HI)
+        assert sorts.radix_sort(int_array, base=2) == sorted(int_array)
+
 
 def test_bucket_sort():
     # rand_float_array
@@ -171,6 +184,12 @@ def test_bucket_sort():
         float_array = rand_float_array(SORT_N)
         assert sorts.bucket_sort(float_array, sort=sorts.bubble_sort) == sorted(float_array)
         assert sorts.bucket_sort(float_array, sort=sorts.quick_sort) == sorted(float_array)
+
+    # buckets argument
+    buckets = SORT_N // 5
+    for _ in range(SORT_LOOPS):
+        float_array = rand_float_array(SORT_N)
+        assert sorts.bucket_sort(float_array, buckets=buckets, sort=sorts.quick_sort) == sorted(float_array)
 
 
 def test_heap_sort():

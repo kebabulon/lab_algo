@@ -27,25 +27,7 @@ class MultisortCallable(Protocol[T]):
         ...
 
 
-def power_sort(a: list[T], key: KeyType = None, cmp: CmpType = None, reverse: bool = False) -> list[T]:
-    a = copy(a)
-
-    if key and cmp:
-        raise ValueError("Both key and cmp arguments are defined")
-
-    if key:
-        a.sort(key=key, reverse=reverse)
-    elif cmp:
-        a.sort(key=cmp_to_key(cmp), reverse=reverse)
-    else:
-        a.sort(reverse=reverse)
-
-    return a
-
-
-SORTS_DICT: dict[str, MultisortCallable] = {
-    ".sort() (powersort)": power_sort
-}
+SORTS_DICT: dict[str, MultisortCallable] = {}
 
 
 def multisort(stable: bool, comparing: bool) -> Callable[[SortCallable], MultisortCallable]:
