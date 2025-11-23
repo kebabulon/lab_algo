@@ -10,7 +10,7 @@ app = typer.Typer()
 )
 def bubble_sort(a: list[int], reverse: bool = False):
     result = sorts.bubble_sort(a, reverse=reverse)
-    print(f"bubble_sort({a}) = {result}")
+    print(*result)
 
 
 @app.command(
@@ -18,7 +18,7 @@ def bubble_sort(a: list[int], reverse: bool = False):
 )
 def quick_sort(a: list[int], reverse: bool = False):
     result = sorts.quick_sort(a, reverse=reverse)
-    print(f"quick_sort({a}) = {result}")
+    print(*result)
 
 
 @app.command(
@@ -26,7 +26,7 @@ def quick_sort(a: list[int], reverse: bool = False):
 )
 def counting_sort(a: list[int], reverse: bool = False):
     result = sorts.counting_sort(a, reverse=reverse)
-    print(f"counting_sort({a}) = {result}")
+    print(*result)
 
 
 @app.command(
@@ -34,7 +34,7 @@ def counting_sort(a: list[int], reverse: bool = False):
 )
 def radix_sort(a: list[int], base: int = 10, reverse: bool = False):
     result = sorts.radix_sort(a, base=base, reverse=reverse)
-    print(f"radix_sort({a}, base={base}) = {result}")
+    print(*result)
 
 
 @app.command(
@@ -42,7 +42,7 @@ def radix_sort(a: list[int], base: int = 10, reverse: bool = False):
 )
 def bucket_sort(a: list[float], buckets: int | None = None, reverse: bool = False):
     result = sorts.bucket_sort(a, buckets=buckets, reverse=reverse)
-    print(f"bucket_sort({a}, buckets={buckets}) = {result}")
+    print(*result)
 
 
 @app.command(
@@ -50,4 +50,4 @@ def bucket_sort(a: list[float], buckets: int | None = None, reverse: bool = Fals
 )
 def heap_sort(a: list[int], reverse: bool = False):
     result = sorts.heap_sort(a, reverse=reverse)
-    print(f"heap_sort({a}) = {result}")
+    print(*result)

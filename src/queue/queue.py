@@ -53,7 +53,7 @@ class Queue():
         return iter(self.stack)
 
     def __str__(self):
-        return f"[{", ".join([str(v) for v in self])}]"
+        return str(self.stack)
 
     def __repr__(self):
         return f"Queue({str(self)})"

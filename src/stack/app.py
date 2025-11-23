@@ -130,4 +130,4 @@ def clear(ctx: Context):
 def print_command(ctx: Context):
     container = get_container(ctx)
 
-    print(repr(container.stack))
+    print(*container.stack)
